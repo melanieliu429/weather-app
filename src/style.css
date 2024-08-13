@@ -56,12 +56,23 @@ body {
 }
 
 #main {
-    width: 60vw;
+    width: 80vw;
     font-size: xx-large;
-    margin: 4rem auto;
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+    margin: 2rem 1rem;
+}
+
+#main > div{
     display: flex;
     flex-direction: column;
+    justify-content: center;
     align-items: center;
+    gap: 1rem;
+}
+#icon {
+    width: 20rem;
 }
 
 #temp {

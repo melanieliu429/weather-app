@@ -2,24 +2,22 @@ import './style.css';
 import { getData } from './getData';
 import Icon from "./icon/search.svg";
 
+
 const searchButton = document.querySelector("#searchButton");
 const searchIcon = new Image();
 searchIcon.src = Icon;
 searchIcon.alt = "search icon";
 searchButton.appendChild(searchIcon);
 
-let tempElement = document.querySelector("#temp");
-let tempMinElement = document.querySelector("#tempMin");
-let tempMaxElement = document.querySelector("#tempMax");
-
 async function loadData(location) {
     const data = await getData(location);
     if (data) {
+        document.querySelector("#icon").src = data.icon();
         document.querySelector("#location").textContent = data.resolvedLocation();
         document.querySelector("#condition").textContent = data.condition(0);
-        document.querySelector("#temp").textContent = data.temp() + " °F";
-        document.querySelector("#tempMin").textContent = data.tempMin() + " °F";
-        document.querySelector("#tempMax").textContent = data.tempMax() + " °F";
+        document.querySelector("#temp").textContent = data.temp() + "°";
+        document.querySelector("#tempMin").textContent = "L: " + data.tempMin() + "°";
+        document.querySelector("#tempMax").textContent = "H: " + data.tempMax() + "°";
         document.querySelector("#day").textContent = data.day();
     } else {
         console.error('Failed to load weather data.');
@@ -39,9 +37,13 @@ celsius.addEventListener('click', () => {
     const tempElements = document.querySelectorAll('#temp, #tempMin, #tempMax');
     tempElements.forEach(tempElement => {
         if (tempElement.className === "metric") {
-            const tempValue = parseFloat(tempElement.textContent);
+            // Extract the numeric value from the text content
+            const tempValue = parseFloat(tempElement.textContent.replace(/[^0-9.-]+/g,""));
             const celsiusValue = Math.round(((tempValue - 32) * (5 / 9)) * 10) / 10;
-            tempElement.textContent = `${celsiusValue} °C`;
+
+            // Preserve the "H:" and "L:" labels if they exist
+            let label = tempElement.textContent.includes("H:") ? "H: " : tempElement.textContent.includes("L:") ? "L: " : "";
+            tempElement.textContent = `${label}${celsiusValue}°`;
             tempElement.className = "imperial";
         }
     });
@@ -53,9 +55,13 @@ fahrenheit.addEventListener('click', () => {
     const tempElements = document.querySelectorAll('#temp, #tempMin, #tempMax');
     tempElements.forEach(tempElement => {
         if (tempElement.className === "imperial") {
-            const tempValue = parseFloat(tempElement.textContent);
+            // Extract the numeric value from the text content
+            const tempValue = parseFloat(tempElement.textContent.replace(/[^0-9.-]+/g,""));
             const fahrenheitValue = Math.round(((tempValue * (9 / 5)) + 32) * 10) / 10;
-            tempElement.textContent = `${fahrenheitValue} °F`;
+
+            // Preserve the "H:" and "L:" labels if they exist
+            let label = tempElement.textContent.includes("H:") ? "H: " : tempElement.textContent.includes("L:") ? "L: " : "";
+            tempElement.textContent = `${label}${fahrenheitValue}°`;
             tempElement.className = "metric";
         }
     });
